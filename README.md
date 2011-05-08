@@ -24,6 +24,10 @@ Pressing `Tab` or `CR` when there's no pattern will go up a directory.
 `C-w` clears the entire pattern. If there is no pattern, it will go up a
 directory.
 
+If a file with the given pattern does not exist then it will be created
+and opened for editing, patterns ending in `/` create new folders
+instead.
+
 # Requirements
 
 * VIM 7.0+ compiled with +python
