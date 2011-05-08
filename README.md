@@ -6,6 +6,8 @@ opening files from inside VIM.
 
 # Preview
 
+[Video](http://www.youtube.com/watch?v=Jq3tQL_r9BY).
+
 ![Screenshot](http://farm4.static.flickr.com/3497/5699173083_56198782fe_z.jpg)
 
 # Installation
