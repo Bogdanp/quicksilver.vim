@@ -31,9 +31,9 @@
 " ======================================================================
 
 "{{{ Initial checks
-"if exists("g:loaded_quicksilver") || !has("python") || &cp
-    "finish
-"endif
+if exists("g:loaded_quicksilver") || !has("python") || &cp
+    finish
+endif
 let g:loaded_quicksilver = 1
 "}}}
 "{{{ Python code
@@ -100,9 +100,9 @@ class Quicksilver(object):
             self.cwd = path
             self.clear()
             vim.command('normal 0f ')
-            return
-        self.close_buffer()
-        vim.command('edit {}'.format(path))
+        else:
+            self.close_buffer()
+            vim.command('edit {}'.format(path))
 
     def update(self, c):
         self.pattern += c
@@ -119,6 +119,8 @@ function! s:MapKeys() "{{{
     map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>0f i
+    map  <silent><buffer><TAB> :python quicksilver.open_file()<CR>0f i
+    imap <silent><buffer><TAB> :python quicksilver.open_file()<CR>0f i
     map  <silent><buffer><CR> :python quicksilver.open_file()<CR>0f i
     imap <silent><buffer><CR> :python quicksilver.open_file()<CR>0f i
     imap <silent><buffer><BS> :python quicksilver.clear_character()<CR>0f i
