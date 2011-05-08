@@ -107,7 +107,7 @@ class Quicksilver(object):
             vim.command('edit {}'.format(path))
 
     def update_cursor(self):
-        vim.command('normal 0f ')
+        vim.command('normal $F[F ')
         vim.command('startinsert')
 
     def update(self, c):
@@ -123,6 +123,7 @@ EOF
 "}}}
 "{{{ Public interface
 function! s:MapKeys() "{{{
+    imap <silent><buffer><SPACE> :python quicksilver.update(' ')<CR>
     map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>
