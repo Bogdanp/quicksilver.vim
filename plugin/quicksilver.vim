@@ -47,7 +47,12 @@ class Quicksilver(object):
 
     def _cmp_files(self, x, y):
         "Files not starting with '.' come first."
-        return 1 if x[0] == '.' else -1
+        if x[0] == '.' and y[0] != '.':
+            return 1
+        if x[0] != '.' and y[0] == '.':
+            return -1
+        else:
+            return cmp(x, y)
 
     def get_files(self):
         for f in os.listdir(self.cwd):
@@ -56,7 +61,6 @@ class Quicksilver(object):
 
     def match_files(self):
         files = [f for f in self.get_files() if self.pattern in f] 
-        files.sort(reverse=True)
         files.sort(cmp=self._cmp_files)
         if not self.pattern:
             files.insert(0, '../')
