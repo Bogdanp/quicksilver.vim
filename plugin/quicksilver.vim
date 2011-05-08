@@ -62,7 +62,7 @@ class Quicksilver(object):
     def match_files(self):
         files = [f for f in self.get_files() if self.pattern in f] 
         files.sort(cmp=self._cmp_files)
-        if not self.pattern:
+        if not self.pattern and self.cwd != '/':
             files.insert(0, '../')
         return files
 
