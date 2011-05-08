@@ -31,9 +31,9 @@
 " ======================================================================
 
 "{{{ Initial checks
-if exists("g:loaded_quicksilver") || !has("python") || &cp
-    finish
-endif
+"if exists("g:loaded_quicksilver") || !has("python") || &cp
+    "finish
+"endif
 let g:loaded_quicksilver = 1
 "}}}
 "{{{ Python code
@@ -66,11 +66,15 @@ class Quicksilver(object):
             files.insert(0, '../')
         return files
 
-    def backspace(self):
+    def clear(self):
+        self.pattern = ''
+        self.update('')
+
+    def clear_character(self):
         self.pattern = self.pattern[:-1]
         self.update('')
 
-    def clear(self):
+    def clear_pattern(self):
         self.pattern = ''
         self.update('')
 
@@ -114,9 +118,10 @@ EOF
 function! s:MapKeys() "{{{
     map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
+    imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>0f i
     map  <silent><buffer><CR> :python quicksilver.open_file()<CR>0f i
     imap <silent><buffer><CR> :python quicksilver.open_file()<CR>0f i
-    imap <silent><buffer><BS> :python quicksilver.backspace()<CR>0f i
+    imap <silent><buffer><BS> :python quicksilver.clear_character()<CR>0f i
     imap <silent><buffer>. :python quicksilver.update('.')<CR>0f i
     imap <silent><buffer>- :python quicksilver.update('-')<CR>0f i
     imap <silent><buffer>_ :python quicksilver.update('_')<CR>0f i
@@ -191,8 +196,9 @@ function! s:HighlightSuggestions() "{{{
     match Suggestions    /\[[^\]]*\]/
 endfunction "}}}
 function! s:ActivateQS() "{{{
-    execute 'bo 1 new __Quicksilver__'
+    execute 'bo 2 new __Quicksilver__'
     python quicksilver.clear()
+    setlocal wrap
     call s:MapKeys()
     call s:HighlightSuggestions()
 endfunction "}}}
