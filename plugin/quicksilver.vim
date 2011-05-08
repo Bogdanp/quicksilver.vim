@@ -133,6 +133,7 @@ function! s:MapKeys() "{{{
     imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>
     map  <silent><buffer><TAB> :python quicksilver.open_file()<CR>
     imap <silent><buffer><TAB> :python quicksilver.open_file()<CR>
+    imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
     map  <silent><buffer><CR> :python quicksilver.open_file()<CR>
     imap <silent><buffer><CR> :python quicksilver.open_file()<CR>
     imap <silent><buffer><BS> :python quicksilver.clear_character()<CR>
@@ -195,7 +196,7 @@ function! s:MapKeys() "{{{
     imap <silent><buffer>Y :python quicksilver.update('Y')<CR>
     imap <silent><buffer>Z :python quicksilver.update('Z')<CR>
     imap <silent><buffer>[ :python quicksilver.update('[')<CR>
-    imap <silent><buffer>\ :python quicksilver.update('\')<CR>
+    imap <silent><buffer>\ :python quicksilver.update('\\')<CR>
     imap <silent><buffer>] :python quicksilver.update(']')<CR>
     imap <silent><buffer>^ :python quicksilver.update('^')<CR>
     imap <silent><buffer>_ :python quicksilver.update('_')<CR>
@@ -227,7 +228,6 @@ function! s:MapKeys() "{{{
     imap <silent><buffer>y :python quicksilver.update('y')<CR>
     imap <silent><buffer>z :python quicksilver.update('z')<CR>
     imap <silent><buffer>{ :python quicksilver.update('{')<CR>
-    imap <silent><buffer>| :python quicksilver.update('|')<CR>
     imap <silent><buffer>} :python quicksilver.update('}')<CR>
     imap <silent><buffer>~ :python quicksilver.update('~')<CR>
 endfunction "}}} 
