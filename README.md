@@ -6,7 +6,7 @@ files from inside VIM.
 
 # Preview
 
-![Screenshot](http://farm4.static.flickr.com/3497/5699173083_56198782fe_b.jpg)
+![Screenshot](http://farm4.static.flickr.com/3497/5699173083_56198782fe_z.jpg)
 
 # Installation
 
