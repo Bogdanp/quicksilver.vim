@@ -31,9 +31,9 @@
 " ======================================================================
 
 "{{{ Initial checks
-"if exists("g:loaded_quicksilver") || !has("python") || &cp
-"    finish
-"endif
+if exists("g:loaded_quicksilver") || !has("python") || &cp
+    finish
+endif
 let g:loaded_quicksilver = 1
 "}}}
 "{{{ Python code
@@ -181,10 +181,15 @@ function! s:MapKeys() "{{{
     imap <silent><buffer>Y :python quicksilver.update('Y')<CR>0f i
     imap <silent><buffer>Z :python quicksilver.update('Z')<CR>0f i
 endfunction "}}} 
+function! s:Highlight() "{{{
+    hi link Suggestion  Comment
+    match Suggestion    /\[[^\]]*\]/
+endfunction "}}}
 function! s:ActivateQS() "{{{
     execute 'bo 1 new __Quicksilver__'
     python quicksilver.clear()
     call s:MapKeys()
+    call s:Highlight()
 endfunction "}}}
 "{{{ Map <leader>q to ActivateQS
 if !hasmapto("<SID>ActivateQS")
