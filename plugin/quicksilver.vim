@@ -96,8 +96,9 @@ class Quicksilver(object):
             if self.match_files()[0] == '../':
                 path = self.up_dir(path)
         except IndexError:
-            self.close_buffer()
-            return
+            path = os.path.join(self.cwd, self.pattern)
+            if path[-1] == '/':
+                os.mkdir(path)
         if os.path.isdir(path):
             self.cwd = path
             self.clear()
