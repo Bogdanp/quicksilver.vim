@@ -6,11 +6,11 @@ files from inside VIM.
 
 # Preview
 
-![Screenshot](http://farm6.static.flickr.com/5310/5698884913_e05be9ae7c_z.jpg)
+![Screenshot](http://farm4.static.flickr.com/3497/5699173083_56198782fe_b.jpg)
 
 # Installation
 
-Use [pathogen][1] and clone this repo to your ~/.vim/bundle directory.
+Use [pathogen][1] and clone this repo into your ~/.vim/bundle directory.
 
 # Usage
 
