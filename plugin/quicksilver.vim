@@ -108,7 +108,10 @@ class Quicksilver(object):
             vim.command('edit {}'.format(path))
 
     def update_cursor(self):
-        vim.command('normal $F[F ')
+        vim.command('normal gg')
+        result = vim.eval('search(" [\'")')
+        if result == '0':
+            vim.eval('search(" []")')
         vim.command('startinsert')
 
     def update(self, c):
