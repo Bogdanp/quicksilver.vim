@@ -75,6 +75,8 @@ class Quicksilver(object):
         self.update('')
 
     def clear_pattern(self):
+        if not self.pattern:
+            self.cwd = self.up_dir(self.cwd + '/')
         self.pattern = ''
         self.update('')
 
