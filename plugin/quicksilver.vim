@@ -136,12 +136,21 @@ function! s:MapKeys() "{{{
     map  <silent><buffer><CR> :python quicksilver.open_file()<CR>
     imap <silent><buffer><CR> :python quicksilver.open_file()<CR>
     imap <silent><buffer><BS> :python quicksilver.clear_character()<CR>
-    imap <silent><buffer>. :python quicksilver.update('.')<CR>
-    imap <silent><buffer>- :python quicksilver.update('-')<CR>
-    imap <silent><buffer>_ :python quicksilver.update('_')<CR>
+    imap <silent><buffer>! :python quicksilver.update('!')<CR>
+    imap <silent><buffer>" :python quicksilver.update('"')<CR>
+    imap <silent><buffer># :python quicksilver.update('#')<CR>
+    imap <silent><buffer>$ :python quicksilver.update('$')<CR>
+    imap <silent><buffer>% :python quicksilver.update('%')<CR>
+    imap <silent><buffer>& :python quicksilver.update('&')<CR>
+    imap <silent><buffer>' :python quicksilver.update(''')<CR>
+    imap <silent><buffer>( :python quicksilver.update('(')<CR>
+    imap <silent><buffer>) :python quicksilver.update(')')<CR>
+    imap <silent><buffer>* :python quicksilver.update('*')<CR>
     imap <silent><buffer>+ :python quicksilver.update('+')<CR>
+    imap <silent><buffer>, :python quicksilver.update(',')<CR>
+    imap <silent><buffer>- :python quicksilver.update('-')<CR>
+    imap <silent><buffer>. :python quicksilver.update('.')<CR>
     imap <silent><buffer>/ :python quicksilver.update('/')<CR>
-    imap <silent><buffer>\ :python quicksilver.update('\')<CR>
     imap <silent><buffer>0 :python quicksilver.update('0')<CR>
     imap <silent><buffer>1 :python quicksilver.update('1')<CR>
     imap <silent><buffer>2 :python quicksilver.update('2')<CR>
@@ -152,32 +161,13 @@ function! s:MapKeys() "{{{
     imap <silent><buffer>7 :python quicksilver.update('7')<CR>
     imap <silent><buffer>8 :python quicksilver.update('8')<CR>
     imap <silent><buffer>9 :python quicksilver.update('9')<CR>
-    imap <silent><buffer>a :python quicksilver.update('a')<CR>
-    imap <silent><buffer>b :python quicksilver.update('b')<CR>
-    imap <silent><buffer>c :python quicksilver.update('c')<CR>
-    imap <silent><buffer>d :python quicksilver.update('d')<CR>
-    imap <silent><buffer>e :python quicksilver.update('e')<CR>
-    imap <silent><buffer>f :python quicksilver.update('f')<CR>
-    imap <silent><buffer>g :python quicksilver.update('g')<CR>
-    imap <silent><buffer>h :python quicksilver.update('h')<CR>
-    imap <silent><buffer>i :python quicksilver.update('i')<CR>
-    imap <silent><buffer>j :python quicksilver.update('j')<CR>
-    imap <silent><buffer>k :python quicksilver.update('k')<CR>
-    imap <silent><buffer>l :python quicksilver.update('l')<CR>
-    imap <silent><buffer>m :python quicksilver.update('m')<CR>
-    imap <silent><buffer>n :python quicksilver.update('n')<CR>
-    imap <silent><buffer>o :python quicksilver.update('o')<CR>
-    imap <silent><buffer>p :python quicksilver.update('p')<CR>
-    imap <silent><buffer>q :python quicksilver.update('q')<CR>
-    imap <silent><buffer>r :python quicksilver.update('r')<CR>
-    imap <silent><buffer>s :python quicksilver.update('s')<CR>
-    imap <silent><buffer>t :python quicksilver.update('t')<CR>
-    imap <silent><buffer>u :python quicksilver.update('u')<CR>
-    imap <silent><buffer>v :python quicksilver.update('v')<CR>
-    imap <silent><buffer>w :python quicksilver.update('w')<CR>
-    imap <silent><buffer>x :python quicksilver.update('x')<CR>
-    imap <silent><buffer>y :python quicksilver.update('y')<CR>
-    imap <silent><buffer>z :python quicksilver.update('z')<CR>
+    imap <silent><buffer>: :python quicksilver.update(':')<CR>
+    imap <silent><buffer>; :python quicksilver.update(';')<CR>
+    imap <silent><buffer>< :python quicksilver.update('<')<CR>
+    imap <silent><buffer>= :python quicksilver.update('=')<CR>
+    imap <silent><buffer>> :python quicksilver.update('>')<CR>
+    imap <silent><buffer>? :python quicksilver.update('?')<CR>
+    imap <silent><buffer>@ :python quicksilver.update('@')<CR>
     imap <silent><buffer>A :python quicksilver.update('A')<CR>
     imap <silent><buffer>B :python quicksilver.update('B')<CR>
     imap <silent><buffer>C :python quicksilver.update('C')<CR>
@@ -204,6 +194,42 @@ function! s:MapKeys() "{{{
     imap <silent><buffer>X :python quicksilver.update('X')<CR>
     imap <silent><buffer>Y :python quicksilver.update('Y')<CR>
     imap <silent><buffer>Z :python quicksilver.update('Z')<CR>
+    imap <silent><buffer>[ :python quicksilver.update('[')<CR>
+    imap <silent><buffer>\ :python quicksilver.update('\')<CR>
+    imap <silent><buffer>] :python quicksilver.update(']')<CR>
+    imap <silent><buffer>^ :python quicksilver.update('^')<CR>
+    imap <silent><buffer>_ :python quicksilver.update('_')<CR>
+    imap <silent><buffer>` :python quicksilver.update('`')<CR>
+    imap <silent><buffer>a :python quicksilver.update('a')<CR>
+    imap <silent><buffer>b :python quicksilver.update('b')<CR>
+    imap <silent><buffer>c :python quicksilver.update('c')<CR>
+    imap <silent><buffer>d :python quicksilver.update('d')<CR>
+    imap <silent><buffer>e :python quicksilver.update('e')<CR>
+    imap <silent><buffer>f :python quicksilver.update('f')<CR>
+    imap <silent><buffer>g :python quicksilver.update('g')<CR>
+    imap <silent><buffer>h :python quicksilver.update('h')<CR>
+    imap <silent><buffer>i :python quicksilver.update('i')<CR>
+    imap <silent><buffer>j :python quicksilver.update('j')<CR>
+    imap <silent><buffer>k :python quicksilver.update('k')<CR>
+    imap <silent><buffer>l :python quicksilver.update('l')<CR>
+    imap <silent><buffer>m :python quicksilver.update('m')<CR>
+    imap <silent><buffer>n :python quicksilver.update('n')<CR>
+    imap <silent><buffer>o :python quicksilver.update('o')<CR>
+    imap <silent><buffer>p :python quicksilver.update('p')<CR>
+    imap <silent><buffer>q :python quicksilver.update('q')<CR>
+    imap <silent><buffer>r :python quicksilver.update('r')<CR>
+    imap <silent><buffer>s :python quicksilver.update('s')<CR>
+    imap <silent><buffer>t :python quicksilver.update('t')<CR>
+    imap <silent><buffer>u :python quicksilver.update('u')<CR>
+    imap <silent><buffer>v :python quicksilver.update('v')<CR>
+    imap <silent><buffer>w :python quicksilver.update('w')<CR>
+    imap <silent><buffer>x :python quicksilver.update('x')<CR>
+    imap <silent><buffer>y :python quicksilver.update('y')<CR>
+    imap <silent><buffer>z :python quicksilver.update('z')<CR>
+    imap <silent><buffer>{ :python quicksilver.update('{')<CR>
+    imap <silent><buffer>| :python quicksilver.update('|')<CR>
+    imap <silent><buffer>} :python quicksilver.update('}')<CR>
+    imap <silent><buffer>~ :python quicksilver.update('~')<CR>
 endfunction "}}} 
 function! s:HighlightSuggestions() "{{{
     hi link Suggestions  Comment
