@@ -1,8 +1,8 @@
 Quicksilver
 ===========
 
-Quicksilver is a VIM plugin whose puprose is to expediate the opening of
-files from inside VIM.
+Quicksilver is a VIM plugin whose puprose is to expediate the process of
+opening files from inside VIM.
 
 # Preview
 
@@ -18,6 +18,11 @@ By default, `\q` will activate the Quicksilver buffer and switch to
 insert mode. Typing any key will update the list of suggestions and
 pressing `CR` will open the first item in the suggestion list. Use `^c`
 to quickly close the buffer.
+
+Pressing `Tab` or `CR` when there's no pattern will go up a directory.
+
+`C-w` clears the entire pattern. If there is no pattern, it will go up a
+directory.
 
 # Requirements
 
