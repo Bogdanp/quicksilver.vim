@@ -125,7 +125,7 @@ class Quicksilver(object):
         except IndexError:
             path = self.rel(self.pattern)
             if path.endswith('/'): os.mkdir(path)
-            if path.endswith('*'):
+            if path.startswith('*') or path.endswith('*'):
                 path = self.glob_paths(path)
         if isinstance(path, list):
             self.close_buffer()
