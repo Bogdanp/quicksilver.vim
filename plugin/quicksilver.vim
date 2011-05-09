@@ -41,6 +41,8 @@ python <<EOF
 import os
 import vim
 
+from glob import glob
+
 class Quicksilver(object):
     def __init__(self):
         self.cwd = '{}/'.format(os.getcwd())
@@ -100,6 +102,15 @@ class Quicksilver(object):
             path = path.replace(' ', '\ ')
             if path[-1] == '/':
                 os.mkdir(path)
+            if path[-1] == '*':
+                paths = [p for p in glob(path) if not os.path.isdir(p)]
+        try:
+            self.close_buffer()
+            for path in paths:
+                vim.command('edit {}'.format(path))
+            return
+        except UnboundLocalError:
+            pass
         if os.path.isdir(path):
             self.cwd = path
             self.clear()
