@@ -45,7 +45,7 @@ from glob import glob
 
 class Quicksilver(object):
     def __init__(self):
-        self.cwd = '{}/'.format(os.getcwd())
+        self.cwd = '{0}/'.format(os.getcwd())
 
     def _cmp_files(self, x, y):
         "Files not starting with '.' come first."
@@ -59,7 +59,7 @@ class Quicksilver(object):
     def get_files(self):
         for f in os.listdir(self.cwd):
             path = os.path.join(self.cwd, f)
-            yield '{}/'.format(f) if os.path.isdir(path) else f
+            yield '{0}/'.format(f) if os.path.isdir(path) else f
 
     def match_files(self):
         files = [f for f in self.get_files() if self.pattern in f] 
@@ -83,7 +83,7 @@ class Quicksilver(object):
         self.update('')
 
     def close_buffer(self):
-        vim.command('{} wincmd w'.format(
+        vim.command('{0} wincmd w'.format(
             vim.eval('bufwinnr("__Quicksilver__")')
         ))
         vim.command('bd!')
@@ -113,7 +113,7 @@ class Quicksilver(object):
     def update(self, c):
         self.pattern += c
         vim.command('normal ggdG')
-        vim.current.line = '{}{} {}'.format(
+        vim.current.line = '{0}{1} {2}'.format(
             self.cwd, self.pattern, self.match_files()
         )
         self.update_cursor()
@@ -130,14 +130,14 @@ class Quicksilver(object):
         if isinstance(path, list):
             self.close_buffer()
             for p in path:
-                vim.command('edit {}'.format(p))
+                vim.command('edit {0}'.format(p))
         elif os.path.isdir(path):
             self.cwd = path
             self.clear()
             self.update_cursor()
         else:
             self.close_buffer()
-            vim.command('edit {}'.format(path))
+            vim.command('edit {0}'.format(path))
 
 quicksilver = Quicksilver()
 EOF
