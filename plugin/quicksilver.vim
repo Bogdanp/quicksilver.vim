@@ -88,8 +88,12 @@ class Quicksilver(object):
         ))
         vim.command('bd!')
 
-    def glob_paths(self, path):
-        return [p for p in glob(path) if not os.path.isdir(p)]
+    def glob_paths(self):
+        P = []
+        for path in glob(self.rel(self.pattern)):
+            if not os.path.isdir(path):
+                P.append(self.rel(path))
+        return P
 
     def go_up_dir(self, path):
         return '/'.join(path.split('/')[:-3]) + '/'
@@ -124,9 +128,9 @@ class Quicksilver(object):
             path = self.go_up_dir(path) if self.match_up_dir() else path
         except IndexError:
             path = self.rel(self.pattern)
-            if path.endswith('/'): os.mkdir(path)
-            if path.startswith('*') or path.endswith('*'):
-                path = self.glob_paths(path)
+            if self.pattern.endswith('/'): os.mkdir(path)
+            if self.pattern.startswith('*') or self.pattern.endswith('*'):
+                path = self.glob_paths()
         if isinstance(path, list):
             self.close_buffer()
             for p in path:
