@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.0.1
+" Version:     0.0.2
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -78,7 +78,7 @@ class Quicksilver(object):
 
     def clear_pattern(self):
         if not self.pattern:
-            self.cwd = self.up_dir(self.cwd + '/')
+            self.cwd = self.go_up_dir(self.cwd + '/')
         self.pattern = ''
         self.update('')
 
@@ -88,36 +88,20 @@ class Quicksilver(object):
         ))
         vim.command('bd!')
 
-    def up_dir(self, path):
+    def glob_paths(self, path):
+        return [p for p in glob(path) if not os.path.isdir(p)]
+
+    def go_up_dir(self, path):
         return '/'.join(path.split('/')[:-3]) + '/'
 
-    def open_file(self):
-        try:
-            path = os.path.join(self.cwd, self.match_files()[0])
-            path = path.replace(' ', '\ ')
-            if self.match_files()[0] == '../':
-                path = self.up_dir(path)
-        except IndexError:
-            path = os.path.join(self.cwd, self.pattern)
-            path = path.replace(' ', '\ ')
-            if path[-1] == '/':
-                os.mkdir(path)
-            if path[-1] == '*':
-                paths = [p for p in glob(path) if not os.path.isdir(p)]
-        try:
-            self.close_buffer()
-            for path in paths:
-                vim.command('edit {}'.format(path))
-            return
-        except UnboundLocalError:
-            pass
-        if os.path.isdir(path):
-            self.cwd = path
-            self.clear()
-            self.update_cursor()
-        else:
-            self.close_buffer()
-            vim.command('edit {}'.format(path))
+    def match_up_dir(self):
+        return self.match_files()[0] == '../'
+
+    def rel(self, path):
+        return self.sanitize_path(os.path.join(self.cwd, path))
+
+    def sanitize_path(self, path):
+        return path.replace(' ', '\ ')
 
     def update_cursor(self):
         vim.command('normal gg')
@@ -134,6 +118,27 @@ class Quicksilver(object):
         )
         self.update_cursor()
 
+    def open(self):
+        try:
+            path = self.rel(self.match_files()[0])
+            path = self.go_up_dir(path) if self.match_up_dir() else path
+        except IndexError:
+            path = self.rel(self.pattern)
+            if path.endswith('/'): os.mkdir(path)
+            if path.endswith('*'):
+                path = self.glob_paths(path)
+        if isinstance(path, list):
+            self.close_buffer()
+            for p in path:
+                vim.command('edit {}'.format(p))
+        elif os.path.isdir(path):
+            self.cwd = path
+            self.clear()
+            self.update_cursor()
+        else:
+            self.close_buffer()
+            vim.command('edit {}'.format(path))
+
 quicksilver = Quicksilver()
 EOF
 "}}}
@@ -143,11 +148,11 @@ function! s:MapKeys() "{{{
     map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>
-    map  <silent><buffer><TAB> :python quicksilver.open_file()<CR>
-    imap <silent><buffer><TAB> :python quicksilver.open_file()<CR>
+    map  <silent><buffer><TAB> :python quicksilver.open()<CR>
+    imap <silent><buffer><TAB> :python quicksilver.open()<CR>
     imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
-    map  <silent><buffer><CR> :python quicksilver.open_file()<CR>
-    imap <silent><buffer><CR> :python quicksilver.open_file()<CR>
+    map  <silent><buffer><CR> :python quicksilver.open()<CR>
+    imap <silent><buffer><CR> :python quicksilver.open()<CR>
     imap <silent><buffer><BS> :python quicksilver.clear_character()<CR>
     imap <silent><buffer>! :python quicksilver.update('!')<CR>
     imap <silent><buffer>" :python quicksilver.update('"')<CR>
