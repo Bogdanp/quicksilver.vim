@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.0.2
+" Version:     0.1.0
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -117,9 +117,10 @@ class Quicksilver(object):
 
     def update(self, c):
         self.pattern += c
+        files_string = ' | '.join(f for f in self.match_files())
         vim.command('normal ggdG')
-        vim.current.line = '{0}{1} {2}'.format(
-            self.cwd, self.pattern, self.match_files()
+        vim.current.line = '{0}{1} {{{2}}}'.format(
+            self.cwd, self.pattern, files_string
         )
         self.update_cursor()
 
@@ -255,7 +256,7 @@ function! s:MapKeys() "{{{
 endfunction "}}} 
 function! s:HighlightSuggestions() "{{{
     hi link Suggestions  Comment
-    match Suggestions    /\[[^\]]*\]/
+    match Suggestions    /\s{[^}]*}/
 endfunction "}}}
 function! s:ActivateQS() "{{{
     execute 'bo 2 new __Quicksilver__'
