@@ -107,11 +107,12 @@ class Quicksilver(object):
     def sanitize_path(self, path):
         return path.replace(' ', '\ ')
 
+    def get_expected_location(self):
+        return len(self.rel(self.pattern)) + 1
+
     def update_cursor(self):
         vim.command('normal gg')
-        result = vim.eval('search(" [\'")')
-        if result == '0':
-            vim.eval('search(" []")')
+        vim.command('normal {}|'.format(self.get_expected_location()))
         vim.command('startinsert')
 
     def update(self, c):
