@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.1.1
+" Version:     0.2.0
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -56,14 +56,17 @@ class Quicksilver(object):
         else:
             return cmp(x, y)
 
+    def fuzzy_match(self, filename):
+        return set(self.pattern.lower()).issubset(set(filename.lower()))
+
     def get_files(self):
         for f in os.listdir(self.cwd):
             path = os.path.join(self.cwd, f)
             yield '{0}/'.format(f) if os.path.isdir(path) else f
 
     def match_files(self):
-        files = [f for f in self.get_files() if self.pattern.lower() in f.lower()] 
-        files.sort(cmp=self._cmp_files)
+        files = sorted([f for f in self.get_files() if self.fuzzy_match(f)],
+                       cmp=self._cmp_files)
         if not self.pattern and self.cwd != '/':
             files.insert(0, '../')
         return files
