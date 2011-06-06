@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.3
+" Version:     0.2.4
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -47,6 +47,7 @@ class Quicksilver(object):
     def __init__(self):
         self.cwd = '{0}/'.format(os.getcwd())
         self.match_fn = self.fuzzy_match
+        self.ignore_case = True
 
     def _cmp_files(self, x, y):
         "Files not starting with '.' come first."
@@ -54,11 +55,23 @@ class Quicksilver(object):
         if x[0] != '.' and y[0] == '.': return -1
         else: return cmp(x, y)
 
+    def set_ignore_case(self, value):
+        try: self.ignore_case = int(value)
+        except ValueError: self.ignore_case = True
+
+    def normalize_case(self, filename):
+        pattern = self.pattern
+        if self.ignore_case:
+            return pattern.lower(), filename.lower()
+        return pattern, filename
+
     def fuzzy_match(self, filename):
-        return set(self.pattern.lower()).issubset(set(filename.lower()))
+        pattern, filename = self.normalize_case(filename)
+        return set(pattern).issubset(set(filename))
 
     def normal_match(self, filename):
-        return self.pattern.lower() in filename.lower()
+        pattern, filename = self.normalize_case(filename)
+        return pattern in filename
 
     def update_match_fn(self, type_):
         try:
@@ -283,6 +296,9 @@ function! s:HighlightSuggestions() "{{{
     hi link Suggestions  Special
     match Suggestions    /\s{[^}]*}/
 endfunction "}}}
+function! s:SetIgnoreCase(value) "{{{
+    python quicksilver.set_ignore_case(vim.eval('a:value'))
+endfunction "}}}
 function! s:SetMatchFn(type) "{{{
     python quicksilver.update_match_fn(vim.eval('a:type'))
 endfunction "}}}
@@ -298,8 +314,9 @@ if !hasmapto("<SID>ActivateQS")
     map <unique><leader>q :call <SID>ActivateQS()<CR>
 endif
 "}}}
-"{{{ Expose Activate and SetMatchFn functions publicly
+"{{{ Expose public functions
 command! -nargs=0 QSActivate   call s:QSActivate()
+command! -nargs=1 QSSetIC      call s:SetIgnoreCase(<args>)
 command! -nargs=1 QSSetMatchFn call s:SetMatchFn(<args>)
 "}}}
 "}}}
