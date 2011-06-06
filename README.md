@@ -26,9 +26,17 @@ Pressing `Tab` or `CR` when there's no pattern will go up a directory.
 `C-w` clears the entire pattern. If there is no pattern, it will go up a
 directory.
 
-If a file with the given pattern does not exist then it will be created
-and opened for editing, patterns ending in `/` create new folders
-instead.
+`C-t` toggles between if pattern and filename case should be ignored or
+not.
+
+`C-f` sets the match function to fuzzy.
+
+`C-n` sets the match function to normal.
+
+If a file with the given pattern does not exist then it will be opened
+for editing. If a pattern ends in `/`, quicksilver will create a
+new folder, change its CWD to that folder and remain in insert mode
+expecting a file name.
 
 Patterns that start or end in a wildcard (`*`) are treated as glob
 patterns. For example, the pattern `*.md` will open all the files that
