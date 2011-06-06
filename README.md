@@ -6,9 +6,9 @@ opening files from inside VIM.
 
 # Preview
 
-[Video](http://www.youtube.com/watch?v=Jq3tQL_r9BY)
+[Video](http://www.youtube.com/watch?v=RDsey4YqpHs)
 
-![Screenshot](http://farm4.static.flickr.com/3497/5699173083_56198782fe_z.jpg)
+![Screenshot](http://farm4.static.flickr.com/3383/5804126014_072806d823_z.jpg)
 
 # Installation
 
@@ -29,9 +29,9 @@ directory.
 `C-t` toggles between if pattern and filename case should be ignored or
 not.
 
-`C-f` sets the match function to fuzzy.
+`C-f` turns on `fuzzy matching`.
 
-`C-n` sets the match function to normal.
+`C-n` turns on `normal matching`.
 
 If a file with the given pattern does not exist then it will be opened
 for editing. If a pattern ends in `/`, quicksilver will create a
