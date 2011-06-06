@@ -33,6 +33,10 @@ not.
 
 `C-n` turns on `normal matching`.
 
+If you prefer normal matching and would like Quicksilver to default
+to it instead of fuzzy matching then you can add `let g:QSMatchFn =
+'normal'` to your `.vimrc`.
+
 If a file with the given pattern does not exist then it will be opened
 for editing. If a pattern ends in `/`, quicksilver will create a
 new folder, change its CWD to that folder and remain in insert mode
