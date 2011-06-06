@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.5
+" Version:     0.2.6
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -61,6 +61,7 @@ class Quicksilver(object):
 
     def toggle_ignore_case(self):
         self.ignore_case = not self.ignore_case
+        self.update('')
 
     def normalize_case(self, filename):
         pattern = self.pattern
@@ -84,6 +85,14 @@ class Quicksilver(object):
             }[type_]
         except KeyError:
             self.match_fn = self.fuzzy_match
+
+    def set_fuzzy_matching(self):
+        self.update_match_fn('fuzzy')
+        self.update('')
+
+    def set_normal_matching(self):
+        self.update_match_fn('normal')
+        self.update('')
 
     def get_files(self):
         for f in os.listdir(self.cwd):
@@ -195,10 +204,10 @@ function! s:MapKeys() "{{{
     map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>
-    map  <silent><buffer><C-f> :python quicksilver.update_match_fn('fuzzy')<CR>
-    imap <silent><buffer><C-f> :python quicksilver.update_match_fn('fuzzy')<CR>
-    map  <silent><buffer><C-n> :python quicksilver.update_match_fn('normal')<CR>
-    imap <silent><buffer><C-n> :python quicksilver.update_match_fn('normal')<CR>
+    map  <silent><buffer><C-f> :python quicksilver.set_fuzzy_matching()<CR>
+    imap <silent><buffer><C-f> :python quicksilver.set_fuzzy_matching()<CR>
+    map  <silent><buffer><C-n> :python quicksilver.set_normal_matching()<CR>
+    imap <silent><buffer><C-n> :python quicksilver.set_normal_matching()<CR>
     map  <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
     imap <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
     map  <silent><buffer><TAB> :python quicksilver.open()<CR>
