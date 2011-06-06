@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.4
+" Version:     0.2.5
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -58,6 +58,9 @@ class Quicksilver(object):
     def set_ignore_case(self, value):
         try: self.ignore_case = int(value)
         except ValueError: self.ignore_case = True
+
+    def toggle_ignore_case(self):
+        self.ignore_case = not self.ignore_case
 
     def normalize_case(self, filename):
         pattern = self.pattern
@@ -192,6 +195,12 @@ function! s:MapKeys() "{{{
     map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
     imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>
+    map  <silent><buffer><C-f> :python quicksilver.update_match_fn('fuzzy')<CR>
+    imap <silent><buffer><C-f> :python quicksilver.update_match_fn('fuzzy')<CR>
+    map  <silent><buffer><C-n> :python quicksilver.update_match_fn('normal')<CR>
+    imap <silent><buffer><C-n> :python quicksilver.update_match_fn('normal')<CR>
+    map  <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
+    imap <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
     map  <silent><buffer><TAB> :python quicksilver.open()<CR>
     imap <silent><buffer><TAB> :python quicksilver.open()<CR>
     imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
