@@ -1,7 +1,7 @@
 Quicksilver
 ===========
 
-Quicksilver is a VIM plugin whose puprose is to expediate the process of
+Quicksilver is a VIM plugin whose puprose is to quicken the process of
 opening files from inside VIM.
 
 # Preview
