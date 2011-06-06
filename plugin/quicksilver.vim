@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.0
+" Version:     0.2.1
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -46,6 +46,7 @@ from glob import glob
 class Quicksilver(object):
     def __init__(self):
         self.cwd = '{0}/'.format(os.getcwd())
+        self.match_fn = self.fuzzy_match
 
     def _cmp_files(self, x, y):
         "Files not starting with '.' come first."
@@ -59,13 +60,25 @@ class Quicksilver(object):
     def fuzzy_match(self, filename):
         return set(self.pattern.lower()).issubset(set(filename.lower()))
 
+    def normal_match(self, filename):
+        return self.pattern.lower() in filename.lower()
+
+    def update_match_fn(self, type_):
+        try:
+            self.match_fn = {
+                'fuzzy': self.fuzzy_match,
+                'normal': self.normal_match,
+            }[type_]
+        except KeyError:
+            self.match_fn = self.fuzzy_match
+
     def get_files(self):
         for f in os.listdir(self.cwd):
             path = os.path.join(self.cwd, f)
             yield '{0}/'.format(f) if os.path.isdir(path) else f
 
     def match_files(self):
-        files = sorted([f for f in self.get_files() if self.fuzzy_match(f)],
+        files = sorted([f for f in self.get_files() if self.match_fn(f)],
                        cmp=self._cmp_files)
         if not self.pattern and self.cwd != '/':
             files.insert(0, '../')
@@ -261,6 +274,9 @@ function! s:HighlightSuggestions() "{{{
     hi link Suggestions  Comment
     match Suggestions    /\s{[^}]*}/
 endfunction "}}}
+function! s:SetMatchFn(type) "{{{
+    python quicksilver.update_match_fn(vim.eval('a:type'))
+endfunction "}}}
 function! s:ActivateQS() "{{{
     execute 'bo 2 new __Quicksilver__'
     python quicksilver.clear()
@@ -272,6 +288,10 @@ endfunction "}}}
 if !hasmapto("<SID>ActivateQS")
     map <unique><leader>q :call <SID>ActivateQS()<CR>
 endif
+"}}}
+"{{{ Expose Activate and SetMatchFn functions publicly
+command! -nargs=0 QSActivate   call s:QSActivate()
+command! -nargs=1 QSSetMatchFn call s:SetMatchFn(<args>)
 "}}}
 "}}}
 " vim:fdm=marker
