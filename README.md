@@ -38,9 +38,9 @@ well as `oof`, `ofo` and `foob`.
 filename that contains the exact phrase within it. For example: the
 pattern `foo` will match `foo` and `foob` but not `ofo` or `oof`.
 
-If you prefer normal matching and would like Quicksilver to default
-to it instead of fuzzy matching then you can add `let g:QSMatchFn =
-'normal'` to your `.vimrc`.
+If you prefer fuzzy matching and would like Quicksilver to default to it
+instead of normal matching then you can add `let g:QSMatchFn = 'fuzzy'`
+to your `.vimrc`.
 
 If a file with the given pattern does not exist then it will be opened
 for editing. If a pattern ends in `/`, quicksilver will create a
