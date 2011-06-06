@@ -46,7 +46,7 @@ from glob import glob
 class Quicksilver(object):
     def __init__(self):
         self.cwd = '{0}/'.format(os.getcwd())
-        self.match_fn = self.fuzzy_match
+        self.match_fn = self.normal_match
         self.ignore_case = True
 
     def _cmp_files(self, x, y):
@@ -84,7 +84,7 @@ class Quicksilver(object):
                 'normal': self.normal_match,
             }[type_]
         except KeyError:
-            self.match_fn = self.fuzzy_match
+            pass
 
     def set_fuzzy_matching(self):
         self.update_match_fn('fuzzy')
