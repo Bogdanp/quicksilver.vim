@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.1
+" Version:     0.2.2
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -50,12 +50,9 @@ class Quicksilver(object):
 
     def _cmp_files(self, x, y):
         "Files not starting with '.' come first."
-        if x[0] == '.' and y[0] != '.':
-            return 1
-        if x[0] != '.' and y[0] == '.':
-            return -1
-        else:
-            return cmp(x, y)
+        if x[0] == '.' and y[0] != '.': return 1
+        if x[0] != '.' and y[0] == '.': return -1
+        else: return cmp(x, y)
 
     def fuzzy_match(self, filename):
         return set(self.pattern.lower()).issubset(set(filename.lower()))
@@ -84,6 +81,9 @@ class Quicksilver(object):
             files.insert(0, '../')
         return files
 
+    def get_matched_file(self):
+        return self.match_files()[0]
+
     def clear(self):
         self.pattern = ''
         self.update('')
@@ -94,7 +94,7 @@ class Quicksilver(object):
 
     def clear_pattern(self):
         if not self.pattern:
-            self.cwd = self.go_up_dir(self.cwd + '/')
+            self.cwd = self.get_up_dir(self.cwd + '/')
         self.pattern = ''
         self.update('')
 
@@ -111,11 +111,8 @@ class Quicksilver(object):
                 P.append(self.rel(path))
         return P
 
-    def go_up_dir(self, path):
+    def get_up_dir(self, path):
         return '/'.join(path.split('/')[:-3]) + '/'
-
-    def match_up_dir(self):
-        return self.match_files()[0] == '../'
 
     def rel(self, path):
         return self.sanitize_path(os.path.join(self.cwd, path))
@@ -123,12 +120,12 @@ class Quicksilver(object):
     def sanitize_path(self, path):
         return path.replace(' ', '\ ')
 
-    def get_expected_location(self):
+    def get_cursor_location(self):
         return len(self.rel(self.pattern)) + 1
 
     def update_cursor(self):
         vim.command('normal gg')
-        vim.command('normal {}|'.format(self.get_expected_location()))
+        vim.command('normal {0}|'.format(self.get_cursor_location()))
         vim.command('startinsert')
 
     def update(self, c):
@@ -140,26 +137,38 @@ class Quicksilver(object):
         )
         self.update_cursor()
 
-    def open(self):
+    def build_path(self):
         try:
-            path = self.rel(self.match_files()[0])
-            path = self.go_up_dir(path) if self.match_up_dir() else path
+            path = self.rel(self.get_matched_file())
+            if self.get_matched_file() == '../':
+                return self.get_up_dir(path)
         except IndexError:
             path = self.rel(self.pattern)
             if self.pattern.endswith('/'): os.mkdir(path)
-            if self.pattern.startswith('*') or self.pattern.endswith('*'):
-                path = self.glob_paths()
-        if isinstance(path, list):
-            self.close_buffer()
-            for p in path:
-                vim.command('edit {0}'.format(p))
-        elif os.path.isdir(path):
-            self.cwd = path
-            self.clear()
-            self.update_cursor()
-        else:
-            self.close_buffer()
+            if self.pattern.startswith('*')\
+            or self.pattern.endswith('*'):
+                return self.glob_paths()
+        return path
+
+    def open_list(self, paths):
+        self.close_buffer()
+        for path in paths:
             vim.command('edit {0}'.format(path))
+
+    def open_dir(self, path):
+        self.cwd = path
+        self.clear()
+        self.update_cursor()
+
+    def open_file(self, path):
+        self.close_buffer()
+        vim.command('edit {0}'.format(path))
+
+    def open(self):
+        path = self.build_path()
+        if isinstance(path, list): self.open_list(path)
+        elif os.path.isdir(path): self.open_dir(path)
+        else: self.open_file(path)
 
 quicksilver = Quicksilver()
 EOF
