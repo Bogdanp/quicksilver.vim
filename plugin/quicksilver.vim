@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.2
+" Version:     0.2.3
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -280,7 +280,7 @@ function! s:MapKeys() "{{{
     imap <silent><buffer>~ :python quicksilver.update('~')<CR>
 endfunction "}}} 
 function! s:HighlightSuggestions() "{{{
-    hi link Suggestions  Comment
+    hi link Suggestions  Special
     match Suggestions    /\s{[^}]*}/
 endfunction "}}}
 function! s:SetMatchFn(type) "{{{
