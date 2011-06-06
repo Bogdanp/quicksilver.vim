@@ -29,9 +29,14 @@ directory.
 `C-t` toggles between if pattern and filename case should be ignored or
 not.
 
-`C-f` turns on `fuzzy matching`.
+`C-f` turns on `fuzzy matching`. Fuzzy matching will match any filename
+that contains every character in the given pattern, no matter the order
+of the characters. For example: the pattern `foo` will match `foo`, as
+well as `oof`, `ofo`, `foob`, etc.
 
-`C-n` turns on `normal matching`.
+`C-n` turns on `normal matching`. Normal matching will match any
+filename that contains the exact phrase within it. For example: the
+pattern `foo` will match `foo` and `foob` but not `ofo` or `oof`.
 
 If you prefer normal matching and would like Quicksilver to default
 to it instead of fuzzy matching then you can add `let g:QSMatchFn =
