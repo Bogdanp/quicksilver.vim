@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.8
+" Version:     0.2.9
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -44,9 +44,9 @@ import vim
 from glob import glob
 
 class Quicksilver(object):
-    def __init__(self):
+    def __init__(self, match_fn='normal'):
+        self.set_match_fn(match_fn)
         self.cwd = '{0}/'.format(os.getcwd())
-        self.match_fn = self.normal_match
         self.ignore_case = True
 
     def _cmp_files(self, x, y):
@@ -77,21 +77,21 @@ class Quicksilver(object):
         pattern, filename = self.normalize_case(filename)
         return pattern in filename
 
-    def update_match_fn(self, type_):
+    def set_match_fn(self, fn):
         try:
             self.match_fn = {
                 'fuzzy': self.fuzzy_match,
                 'normal': self.normal_match,
-            }[type_]
+            }[fn]
         except KeyError:
-            pass
+            self.match_fn = self.normal_match
 
     def set_fuzzy_matching(self):
-        self.update_match_fn('fuzzy')
+        self.set_match_fn('fuzzy')
         self.update('')
 
     def set_normal_matching(self):
-        self.update_match_fn('normal')
+        self.set_match_fn('normal')
         self.update('')
 
     def get_files(self):
@@ -194,11 +194,16 @@ class Quicksilver(object):
         if isinstance(path, list): self.open_list(path)
         elif os.path.isdir(path): self.open_dir(path)
         else: self.open_file(path)
-
-quicksilver = Quicksilver()
 EOF
 "}}}
 "{{{ Public interface
+"{{{ Initialize Quicksilver object
+if exists('g:QSMatchFn')
+    python quicksilver = Quicksilver(vim.eval('g:QSMatchFn'))
+else
+    python quicksilver = Quicksilver()
+endif
+"}}}
 function! s:MapKeys() "{{{
     imap <silent><buffer><SPACE> :python quicksilver.update(' ')<CR>
     map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
@@ -318,7 +323,7 @@ function! s:SetIgnoreCase(value) "{{{
     python quicksilver.set_ignore_case(vim.eval('a:value'))
 endfunction "}}}
 function! s:SetMatchFn(type) "{{{
-    python quicksilver.update_match_fn(vim.eval('a:type'))
+    python quicksilver.set_match_fn(vim.eval('a:type'))
 endfunction "}}}
 function! s:ActivateQS() "{{{
     execute 'bo 2 new __Quicksilver__'
@@ -326,9 +331,6 @@ function! s:ActivateQS() "{{{
     setlocal wrap
     call s:MapKeys()
     call s:HighlightSuggestions()
-    if exists('g:QSMatchFn')
-        call s:SetMatchFn(g:QSMatchFn)
-    endif
 endfunction "}}}
 "{{{ Map <leader>q to ActivateQS
 if !hasmapto("<SID>ActivateQS")
