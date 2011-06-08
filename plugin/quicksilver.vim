@@ -247,10 +247,6 @@ function! s:MapKeys() "{{{
     imap <silent><buffer><TAB> :python quicksilver.increase_index()<CR>
     map  <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
     imap <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
-    map  <silent><buffer><C-n> :python quicksilver.increase_index()<CR>
-    imap <silent><buffer><C-n> :python quicksilver.increase_index()<CR>
-    map  <silent><buffer><C-p> :python quicksilver.decrease_index()<CR>
-    imap <silent><buffer><C-p> :python quicksilver.decrease_index()<CR>
     imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
     map  <silent><buffer><CR> :python quicksilver.open()<CR>
     imap <silent><buffer><CR> :python quicksilver.open()<CR>
