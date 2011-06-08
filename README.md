@@ -21,7 +21,10 @@ insert mode. Typing any key will update the list of suggestions and
 pressing `CR` will open the first item in the suggestion list. Use `C-c`
 to quickly close the buffer.
 
-Pressing `Tab` or `CR` when there's no pattern will go up a directory.
+You may cycle through the suggestion list using `Tab` and `S-Tab`. `CR`
+will open the current suggestion (first item in the list).
+
+Pressing `CR` when there is no pattern will go up a directory.
 
 `C-w` clears the entire pattern. If there is no pattern, it will go up a
 directory.
