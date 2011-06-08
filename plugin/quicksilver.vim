@@ -130,11 +130,11 @@ class Quicksilver(object):
         vim.command('bd!')
 
     def glob_paths(self):
-        P = []
+        paths = []
         for path in glob(self.rel(self.pattern)):
             if not os.path.isdir(path):
-                P.append(self.rel(path))
-        return P
+                paths.append(self.rel(path))
+        return paths
 
     def get_up_dir(self, path):
         return '/'.join(path.split('/')[:-3]) + '/'
