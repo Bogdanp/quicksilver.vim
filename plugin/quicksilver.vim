@@ -62,7 +62,7 @@ class Quicksilver(object):
 
     def toggle_ignore_case(self):
         self.ignore_case = not self.ignore_case
-        self.update('')
+        self.update()
 
     def normalize_case(self, filename):
         pattern = self.pattern
@@ -89,11 +89,11 @@ class Quicksilver(object):
 
     def set_fuzzy_matching(self):
         self.set_match_fn('fuzzy')
-        self.update('')
+        self.update()
 
     def set_normal_matching(self):
         self.set_match_fn('normal')
-        self.update('')
+        self.update()
 
     def get_files(self):
         for f in os.listdir(self.cwd):
@@ -107,7 +107,7 @@ class Quicksilver(object):
             current = [files[self.match_index]]
             up_to_current = files[1:self.match_index - 1]
             after_current = files[self.match_index + 1:]
-            return current + up_to_current + after_current
+            return current
         except IndexError:
             self.match_index = 0
             return files
@@ -117,13 +117,13 @@ class Quicksilver(object):
             self.match_index = len(self.match_files())
         else:
             self.match_index -= 1
-        self.update('')
+        self.update(cmi=False)
 
     def increase_index(self):
         self.match_index += 1
         if self.match_index > len(self.match_files()):
             self.match_index = 0
-        self.update('')
+        self.update(cmi=False)
 
     def match_files(self):
         files = sorted([f for f in self.get_files() if self.match_fn(f)],
@@ -137,17 +137,17 @@ class Quicksilver(object):
 
     def clear(self):
         self.pattern = ''
-        self.update('')
+        self.update()
 
     def clear_character(self):
         self.pattern = self.pattern[:-1]
-        self.update('')
+        self.update()
 
     def clear_pattern(self):
         if not self.pattern:
             self.cwd = self.get_up_dir(self.cwd + '/')
         self.pattern = ''
-        self.update('')
+        self.update()
 
     def close_buffer(self):
         vim.command('{0} wincmd w'.format(
@@ -179,7 +179,8 @@ class Quicksilver(object):
         vim.command('normal {0}|'.format(self.get_cursor_location()))
         vim.command('startinsert')
 
-    def update(self, c):
+    def update(self, c='', cmi=True):
+        if cmi: self.matched_index = 0
         self.pattern += c
         files_string = ' | '.join(f for f in self.match_files())
         vim.command('normal ggdG')
