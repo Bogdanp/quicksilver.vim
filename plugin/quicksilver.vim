@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.2.9
+" Version:     0.3.0
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -105,25 +105,24 @@ class Quicksilver(object):
         'matched_index' at the front."""
         try:
             current = [files[self.match_index]]
-            up_to_current = files[1:self.match_index - 1]
+            up_to_current = files[:self.match_index]
             after_current = files[self.match_index + 1:]
-            return current
+            return current + after_current + up_to_current
         except IndexError:
             self.match_index = 0
             return files
 
     def decrease_index(self):
-        if self.match_index <= 0:
-            self.match_index = len(self.match_files())
-        else:
+        if self.match_index > 0:
             self.match_index -= 1
         self.update(cmi=False)
 
     def increase_index(self):
         self.match_index += 1
-        if self.match_index > len(self.match_files()):
-            self.match_index = 0
         self.update(cmi=False)
+
+    def reset_match_index(self):
+        self.match_index = 0
 
     def match_files(self):
         files = sorted([f for f in self.get_files() if self.match_fn(f)],
@@ -133,7 +132,7 @@ class Quicksilver(object):
         return self.index_files(files)
 
     def get_matched_file(self):
-        return self.match_files()[self.match_index]
+        return self.match_files()[0]
 
     def clear(self):
         self.pattern = ''
@@ -163,6 +162,7 @@ class Quicksilver(object):
         return paths
 
     def get_up_dir(self, path):
+        self.reset_match_index()
         return '/'.join(path.split('/')[:-3]) + '/'
 
     def rel(self, path):
@@ -218,6 +218,7 @@ class Quicksilver(object):
 
     def open(self):
         path = self.build_path()
+        self.reset_match_index()
         if isinstance(path, list): self.open_list(path)
         elif os.path.isdir(path): self.open_dir(path)
         else: self.open_file(path)
@@ -246,6 +247,10 @@ function! s:MapKeys() "{{{
     imap <silent><buffer><TAB> :python quicksilver.increase_index()<CR>
     map  <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
     imap <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
+    map  <silent><buffer><C-n> :python quicksilver.increase_index()<CR>
+    imap <silent><buffer><C-n> :python quicksilver.increase_index()<CR>
+    map  <silent><buffer><C-p> :python quicksilver.decrease_index()<CR>
+    imap <silent><buffer><C-p> :python quicksilver.decrease_index()<CR>
     imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
     map  <silent><buffer><CR> :python quicksilver.open()<CR>
     imap <silent><buffer><CR> :python quicksilver.open()<CR>
