@@ -48,6 +48,7 @@ class Quicksilver(object):
         self.set_match_fn(match_fn)
         self.cwd = '{0}/'.format(os.getcwd())
         self.ignore_case = True
+        self.match_index = 0
 
     def _cmp_files(self, x, y):
         "Files not starting with '.' come first."
@@ -99,15 +100,40 @@ class Quicksilver(object):
             path = os.path.join(self.cwd, f)
             yield '{0}/'.format(f) if os.path.isdir(path) else f
 
+    def index_files(self, files):
+        """Returns a list of files with the item at index
+        'matched_index' at the front."""
+        try:
+            current = [files[self.match_index]]
+            up_to_current = files[1:self.match_index - 1]
+            after_current = files[self.match_index + 1:]
+            return current + up_to_current + after_current
+        except IndexError:
+            self.match_index = 0
+            return files
+
+    def decrease_index(self):
+        if self.match_index <= 0:
+            self.match_index = len(self.match_files())
+        else:
+            self.match_index -= 1
+        self.update('')
+
+    def increase_index(self):
+        self.match_index += 1
+        if self.match_index > len(self.match_files()):
+            self.match_index = 0
+        self.update('')
+
     def match_files(self):
         files = sorted([f for f in self.get_files() if self.match_fn(f)],
                        cmp=self._cmp_files)
         if not self.pattern and self.cwd != '/':
             files.insert(0, '../')
-        return files
+        return self.index_files(files)
 
     def get_matched_file(self):
-        return self.match_files()[0]
+        return self.match_files()[self.match_index]
 
     def clear(self):
         self.pattern = ''
@@ -215,8 +241,10 @@ function! s:MapKeys() "{{{
     imap <silent><buffer><C-n> :python quicksilver.set_normal_matching()<CR>
     map  <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
     imap <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
-    map  <silent><buffer><TAB> :python quicksilver.open()<CR>
-    imap <silent><buffer><TAB> :python quicksilver.open()<CR>
+    map  <silent><buffer><TAB> :python quicksilver.increase_index()<CR>
+    imap <silent><buffer><TAB> :python quicksilver.increase_index()<CR>
+    map  <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
+    imap <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
     imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
     map  <silent><buffer><CR> :python quicksilver.open()<CR>
     imap <silent><buffer><CR> :python quicksilver.open()<CR>
