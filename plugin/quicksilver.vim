@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.3.0
+" Version:     0.3.1
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -202,6 +202,10 @@ class Quicksilver(object):
                 return self.glob_paths()
         return path
 
+    def open_on_tab(self):
+        if len(self.match_files()) == 1: self.open()
+        else: self.increase_index()
+
     def open_list(self, paths):
         self.close_buffer()
         for path in paths:
@@ -243,8 +247,8 @@ function! s:MapKeys() "{{{
     imap <silent><buffer><C-n> :python quicksilver.set_normal_matching()<CR>
     map  <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
     imap <silent><buffer><C-t> :python quicksilver.toggle_ignore_case()<CR>
-    map  <silent><buffer><TAB> :python quicksilver.increase_index()<CR>
-    imap <silent><buffer><TAB> :python quicksilver.increase_index()<CR>
+    map  <silent><buffer><TAB> :python quicksilver.open_on_tab()<CR>
+    imap <silent><buffer><TAB> :python quicksilver.open_on_tab()<CR>
     map  <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
     imap <silent><buffer><S-TAB> :python quicksilver.decrease_index()<CR>
     imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
