@@ -24,6 +24,9 @@ to quickly close the buffer.
 You may cycle through the suggestion list using `Tab` and `S-Tab`. `CR`
 will open the current suggestion (first item in the list).
 
+If there is only one file in the suggestion list, pressing `Tab` will
+open that file.
+
 Pressing `CR` when there is no pattern will go up a directory.
 
 `C-w` clears the entire pattern. If there is no pattern, it will go up a
