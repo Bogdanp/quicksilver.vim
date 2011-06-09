@@ -48,10 +48,10 @@ If you prefer fuzzy matching and would like Quicksilver to default to it
 instead of normal matching then you can add `let g:QSMatchFn = 'fuzzy'`
 to your `.vimrc`.
 
-If a file with the given pattern does not exist then it will be opened
-for editing. If a pattern ends in `/`, quicksilver will create a
-new folder, change its CWD to that folder and remain in insert mode
-expecting a file name.
+If a file with the given pattern does not exist then a new file will be
+opened for editing with the given pattern as its filename. If a pattern
+ends in `/`, quicksilver will create a new folder, change its CWD to
+that folder and remain in insert mode expecting a file name.
 
 Patterns that start or end in a wildcard (`*`) are treated as glob
 patterns. For example, the pattern `*.md` will open all the files that
