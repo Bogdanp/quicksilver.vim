@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.3.1
+" Version:     0.3.2
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -153,6 +153,7 @@ class Quicksilver(object):
             vim.eval('bufwinnr("__Quicksilver__")')
         ))
         vim.command('bd!')
+        vim.command('wincmd p')
 
     def glob_paths(self):
         paths = []
