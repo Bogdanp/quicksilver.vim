@@ -41,6 +41,7 @@ python <<EOF
 import os
 import vim
 
+from collections import OrderedDict
 from glob import glob
 
 class Quicksilver(object):
@@ -55,6 +56,10 @@ class Quicksilver(object):
         if x[0] == '.' and y[0] != '.': return 1
         if x[0] != '.' and y[0] == '.': return -1
         else: return cmp(x, y)
+
+    def _ordered_set(self, string):
+        'Fake an ordered set.'
+        return OrderedDict((c, True) for c in string).keys()
 
     def set_ignore_case(self, value):
         try: self.ignore_case = int(value)
@@ -72,7 +77,12 @@ class Quicksilver(object):
 
     def fuzzy_match(self, filename):
         pattern, filename = self.normalize_case(filename)
-        return set(pattern).issubset(set(filename))
+        for item in self._ordered_set(pattern):
+            pos = filename.find(item)
+            if filename and pos == -1:
+                return False
+            filename = filename[pos:]
+        return True
 
     def normal_match(self, filename):
         pattern, filename = self.normalize_case(filename)
