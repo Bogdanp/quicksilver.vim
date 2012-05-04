@@ -51,7 +51,7 @@ class QuicksilverConst(object):
     
     # Platform-specific root directories.
     if sys.platform == "win32":
-        ROOTS = ["{0}:\\".format(chr(drive)) for drive in range(ord("a"), ord("z"))]
+        ROOTS = ["{0}:\\".format(chr(drive)) for drive in range(ord("A"), ord("Z"))]
     else:
         ROOTS = (os.sep,)
 
@@ -79,6 +79,27 @@ class QuicksilverUtil(object):
         vim.command("normal gg")
         vim.command("normal {0}|".format(len(qs.rel(qs.pattern)) + 1))
         vim.command("startinsert")
+
+    @classmethod
+    def close_buffer(cls):
+        "Closes the current VIM buffer."
+        vim.command("{0} wincmd w".format(
+            vim.eval('bufwinnr("__Quicksilver__")')
+        ))
+        vim.command("bd!")
+        vim.command("exe g:QSRestoreWindows")
+        vim.command("unlet g:QSRestoreWindows")
+        vim.command("wincmd p")
+
+    @classmethod
+    def edit(cls, path):
+        "Opens the given path for editing."
+        vim.command("edit {0}".format(path))
+
+    @classmethod
+    def cd(cls, path):
+        "Changed the VIM working dir to the given path."
+        vim.command("cd {0}".format(path))
 
 class QuicksilverMatcher(object):
     @classmethod
@@ -144,7 +165,7 @@ class Quicksilver(object):
     def match_files(self):
         "Gets and indexes the matched files."
         files = self.get_files()
-        if not self.pattern and self.cwd.lower() not in QuicksilverConst.ROOTS:
+        if not self.pattern and self.cwd.upper() not in QuicksilverConst.ROOTS:
             files.insert(0, ".." + os.sep)
         return self.index_files(files)
 
@@ -189,15 +210,6 @@ class Quicksilver(object):
             self.cwd = self.get_parent_dir(self.cwd + os.sep)
         self.pattern = ""
         self.update()
-
-    def close_buffer(self):
-        vim.command("{0} wincmd w".format(
-            vim.eval('bufwinnr("__Quicksilver__")')
-        ))
-        vim.command("bd!")
-        vim.command("exe g:QSRestoreWindows")
-        vim.command("unlet g:QSRestoreWindows")
-        vim.command("wincmd p")
 
     def glob_paths(self):
         paths = []
@@ -248,19 +260,19 @@ class Quicksilver(object):
         else: self.increase_index()
 
     def open_list(self, paths):
-        self.close_buffer()
+        QuicksilverUtil.close_buffer()
         for path in paths:
-            vim.command("edit {0}".format(path))
+            QuicksilverUtil.edit(path)
 
     def open_dir(self, path):
         self.cwd = path
         self.clear()
         QuicksilverUtil.update_cursor(self)
-        vim.command("cd {0}".format(path))
+        QuicksilverUtil.cd(path)
 
     def open_file(self, path):
-        self.close_buffer()
-        vim.command("edit {0}".format(path))
+        QuicksilverUtil.close_buffer()
+        QuicksilverUtil.edit(path)
 
     def open(self):
         path = self.build_path()
@@ -282,8 +294,8 @@ endif
 "}}}
 function! s:MapKeys() "{{{
     imap <silent><buffer><SPACE> :python quicksilver.update(' ')<CR>
-    map  <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
-    imap <silent><buffer><C-c> :python quicksilver.close_buffer()<CR>
+    map  <silent><buffer><C-c> :python QuicksilverUtil.close_buffer()<CR>
+    imap <silent><buffer><C-c> :python QuicksilverUtil.close_buffer()<CR>
     imap <silent><buffer><C-w> :python quicksilver.clear_pattern()<CR>
     map  <silent><buffer><C-f> :python quicksilver.set_matcher("fuzzy")<CR>
     imap <silent><buffer><C-f> :python quicksilver.set_matcher("fuzzy")<CR>
