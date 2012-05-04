@@ -39,15 +39,23 @@ let g:loaded_quicksilver = 1
 "{{{ Python code
 python <<EOF
 import os
+import sys
 import vim
 
 from collections import OrderedDict
 from glob import glob
 
 class Quicksilver(object):
+    IGNORED = ('$Recycle.Bin',)
+    
+    if sys.platform == 'win32':
+        BASEDIRS = [os.sep] + ['{0}:\\'.format(chr(drive)) for drive in range(ord('a'), ord('z'))]
+    else:
+        BASEDIRS = (os.sep,)
+
     def __init__(self, match_fn='normal'):
         self.set_match_fn(match_fn)
-        self.cwd = '{0}/'.format(os.getcwd())
+        self.cwd = '{0}{1}'.format(os.getcwd(), os.sep)
         self.ignore_case = True
         self.match_index = 0
 
@@ -107,8 +115,11 @@ class Quicksilver(object):
 
     def get_files(self):
         for f in os.listdir(self.cwd):
-            path = os.path.join(self.cwd, f)
-            yield '{0}/'.format(f) if os.path.isdir(path) else f
+            if f in Quicksilver.IGNORED: continue
+            if os.path.isdir(os.path.join(self.cwd, f)):
+                yield '{0}{1}'.format(f, os.sep)
+            else:
+                yield f
 
     def index_files(self, files):
         """Returns a list of files with the item at index
@@ -135,10 +146,12 @@ class Quicksilver(object):
         self.match_index = 0
 
     def match_files(self):
-        files = sorted([f for f in self.get_files() if self.match_fn(f)],
-                       cmp=self._cmp_files)
-        if not self.pattern and self.cwd != '/':
-            files.insert(0, '../')
+        files = sorted(
+            [f for f in self.get_files() if self.match_fn(f)],
+            cmp=self._cmp_files
+        )
+        if not self.pattern and self.cwd.lower() not in Quicksilver.BASEDIRS:
+            files.insert(0, '..' + os.sep)
         return self.index_files(files)
 
     def get_matched_file(self):
@@ -176,13 +189,15 @@ class Quicksilver(object):
 
     def get_up_dir(self, path):
         self.reset_match_index()
-        return '/'.join(path.split('/')[:-3]) + '/'
+        return os.sep.join(path.split(os.sep)[:-3]) + os.sep
 
     def rel(self, path):
         return self.sanitize_path(os.path.join(self.cwd, path))
 
     def sanitize_path(self, path):
-        return path.replace(' ', '\ ')
+        if sys.platform == 'win32':
+            return path
+        return path.replace(' ', '\\ ')
 
     def get_cursor_location(self):
         return len(self.rel(self.pattern)) + 1
@@ -205,11 +220,11 @@ class Quicksilver(object):
     def build_path(self):
         try:
             path = self.rel(self.get_matched_file())
-            if self.get_matched_file() == '../':
+            if self.get_matched_file() == '..' + os.sep:
                 return self.get_up_dir(path)
         except IndexError:
             path = self.rel(self.pattern)
-            if self.pattern.endswith('/'): os.mkdir(path)
+            if self.pattern.endswith(os.sep): os.mkdir(path)
             if self.pattern.startswith('*')\
             or self.pattern.endswith('*'):
                 return self.glob_paths()
@@ -228,6 +243,7 @@ class Quicksilver(object):
         self.cwd = path
         self.clear()
         self.update_cursor()
+        vim.command('cd {0}'.format(path))
 
     def open_file(self, path):
         self.close_buffer()
