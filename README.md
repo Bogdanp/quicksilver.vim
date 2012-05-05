@@ -16,16 +16,16 @@ Use [pathogen][1] and clone this repo into your ~/.vim/bundle directory.
 
 # Usage
 
-By default, `\q` will activate the Quicksilver buffer and switch to
-insert mode. Typing any key will update the list of suggestions and
-pressing `CR` will open the first item in the suggestion list. Use `C-c`
-to quickly close the buffer.
+By default, `\q` will activate the Quicksilver buffer and switch to insert
+mode. Typing any key will update the list of suggestions and pressing `CR`
+will open the first item in the suggestion list. Use `C-c` to quickly
+close the buffer.
 
-You may cycle through the suggestion list using `Tab` and `S-Tab`. `CR`
-will open the current suggestion (first item in the list).
+You may cycle through the suggestion list using `Tab` and `S-Tab`. `CR` will
+open the current suggestion (that's the first item in the list of matches).
 
-If there is only one item in the suggestion list, pressing `Tab` will
-open that item.
+If there is only one item in the suggestion list, pressing `Tab` will open
+that item.
 
 Pressing `CR` when there is no pattern will go up a directory.
 
@@ -36,15 +36,14 @@ directory.
 not.
 
 `C-f` turns on `fuzzy matching`. Fuzzy matching will match any filename
-that contains every character in the given pattern, no matter the order
-of the characters. For example: the pattern `foo` will match `foo`, as
-well as `oof`, `ofo` and `foob`.
+that contains every character in pattern in order. For example, the
+pattern `rdm` will match `README` but not `REMADE`.
 
 `C-n` turns on `normal matching`. Normal matching will match any
-filename that contains the exact phrase within it. For example: the
+filename that contains the exact pattern within it. For example, the
 pattern `foo` will match `foo` and `foob` but not `ofo` or `oof`.
 
-If you prefer fuzzy matching and would like Quicksilver to default to it
+If you prefer fuzzy matching and would like Quicksilver to default to using it
 instead of normal matching then you can add `let g:QSMatchFn = 'fuzzy'`
 to your `.vimrc`.
 
