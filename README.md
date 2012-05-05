@@ -16,7 +16,7 @@ Use [pathogen][1] and clone this repo into your ~/.vim/bundle directory.
 
 # Usage
 
-By default, `\q` will activate the Quicksilver buffer and switch to insert
+By default, `<leader>q` will activate the Quicksilver buffer and switch to insert
 mode. Typing any key will update the list of suggestions and pressing `CR`
 will open the first item in the suggestion list. Use `C-c` to quickly
 close the buffer.
