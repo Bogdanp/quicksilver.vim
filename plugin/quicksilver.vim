@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.4.1
+" Version:     0.4.2
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -38,22 +38,28 @@ let g:loaded_quicksilver = 1
 "}}}
 "{{{ Python code
 python <<EOF
+import glob
 import os
 import sys
 import vim
 
 from collections import OrderedDict
-from glob import glob
 
 class QuicksilverConst(object):
     # Files and folders that should never appear in the list of matches.
-    IGNORED = ("^\\$Recycle.Bin$", ".*\\.sw*")
+    IGNORED = ("^\\$Recycle\\.Bin$", ".*\\.sw*")
     
     # Platform-specific root directories.
     if sys.platform == "win32":
         ROOTS = ["{0}:\\".format(chr(drive)) for drive in range(ord("A"), ord("Z"))]
     else:
         ROOTS = (os.sep,)
+
+    # The string by which the matches should be separated.
+    SEPARATOR = " | "
+
+    # When this string is selected from the matches, quicksilver must go up a dir.
+    UPDIR = "..{0}".format(os.sep)
 
 class QuicksilverUtil(object):
     @classmethod
@@ -109,6 +115,11 @@ class QuicksilverUtil(object):
                 return True
         return False
 
+    @classmethod
+    def is_updir(cls, filename):
+        "Checks whether or not the given filename is the updir string."
+        return filename == QuicksilverConst.UPDIR
+
 class QuicksilverMatcher(object):
     @classmethod
     def fuzzy(cls, qs, filename):
@@ -133,17 +144,31 @@ class Quicksilver(object):
         self.set_matcher(matcher)
         self.cwd = "{0}{1}".format(os.getcwd(), os.sep)
         self.ignore_case = True
-        self.match_index = 0
+        self.index = 0
 
-    def set_ignore_case(self, value):
-        try: self.ignore_case = int(value)
+    def set_ignore_case(self, ignore_case):
+        "Setter for the ignore_case property."
+        try: self.ignore_case = int(ignore_case)
         except ValueError: self.ignore_case = True
 
     def toggle_ignore_case(self):
+        "Toggles the value of the ignore_case property."
         self.ignore_case = not self.ignore_case
         self.update()
 
+    def rel(self, path):
+        """Joins the given path together with the CWD and sanitizes the
+        resulting path."""
+        return self.sanitize_path(os.path.join(self.cwd, path))
+
+    def get_parent(self, path):
+        "Returns the parent directory of the CWD."
+        self.index = 0
+        return os.sep.join(path.split(os.sep)[:-3]) + os.sep
+
     def normalize_case(self, filename):
+        """Normalizes the character case for the pattern and the given filename
+        based the value of ignore_case."""
         pattern = self.pattern
         if self.ignore_case:
             return pattern.lower(), filename.lower()
@@ -174,7 +199,7 @@ class Quicksilver(object):
         "Gets and indexes the matched files."
         files = self.get_files()
         if not self.pattern and self.cwd.upper() not in QuicksilverConst.ROOTS:
-            files.insert(0, ".." + os.sep)
+            files.insert(0, QuicksilverConst.UPDIR)
         return self.index_files(files)
 
     def get_matched_file(self):
@@ -185,83 +210,84 @@ class Quicksilver(object):
         """Returns a list of files with the item at index 'matched_index' at
         the front."""
         try:
-            current = [files[self.match_index]]
-            up_to_current = files[:self.match_index]
-            after_current = files[self.match_index + 1:]
+            current = [files[self.index]]
+            up_to_current = files[:self.index]
+            after_current = files[self.index + 1:]
             return current + after_current + up_to_current
         except IndexError:
-            self.match_index = 0
+            self.index = 0
             return files
 
     def decrease_index(self):
-        if self.match_index > 0:
-            self.match_index -= 1
-        self.update(cmi=False)
-
-    def increase_index(self):
-        self.match_index += 1
-        self.update(cmi=False)
-
-    def reset_match_index(self):
-        self.match_index = 0
-
-    def clear(self):
-        self.pattern = ""
+        """(On S-Tab) decreases the match index and calls update so that the
+        changes are visible in the match list."""
+        if self.index > 0:
+            self.index -= 1
         self.update()
 
-    def clear_character(self):
+    def increase_index(self):
+        """(On Tab) increases the match index and calls update so that the
+        changes are visible in the match list."""
+        self.index += 1
+        self.update()
+
+    def on_backspace(self):
+        "Removes the last character in the pattern and redraws the buffer."
         self.pattern = self.pattern[:-1]
         self.update()
 
-    def clear_pattern(self):
-        if not self.pattern:
-            self.cwd = self.get_parent_dir(self.cwd + os.sep)
+    def clear(self):
+        "Clears the pattern and redraws the buffer."
         self.pattern = ""
         self.update()
 
-    def glob_paths(self):
-        paths = []
-        for path in glob(self.rel(self.pattern)):
+    def clear_pattern(self):
+        """Similar to a normal clear but it also goes up a dir if there is no
+        pattern to clear."""
+        if not self.pattern and not self.cwd in QuicksilverConst.ROOTS:
+            self.cwd = self.get_parent(self.cwd + os.sep)
+        self.clear()
+
+    def glob(self, pattern):
+        """Globs the given pattern and returns the paths of all the files that
+        match."""
+        for path in glob.glob(pattern):
             if not os.path.isdir(path):
-                paths.append(self.rel(path))
-        return paths
-
-    def get_parent_dir(self, path):
-        self.reset_match_index()
-        return os.sep.join(path.split(os.sep)[:-3]) + os.sep
-
-    def rel(self, path):
-        return self.sanitize_path(os.path.join(self.cwd, path))
+                yield self.rel(path)
 
     def sanitize_path(self, path):
-        "TODO: Figure out if this is actually needed on Linux at all."
+        "Sanitize the path for UNIX systems."
         if sys.platform == "win32":
             return path
         return path.replace(" ", "\\ ")
 
-    def update(self, c="", cmi=True):
-        if cmi: self.matched_index = 0
-        self.pattern += c
-        files_string = " | ".join(f for f in self.match_files())
-        vim.command("normal ggdG")
+    def update(self, character=""):
+        """Add the given character to the pattern and "redraw" the path and
+        matches."""
+        self.pattern += character
         vim.current.line = "{0}{1} {{{2}}}".format(
-            self.cwd, self.pattern, files_string
+            self.cwd, self.pattern,
+            QuicksilverConst.SEPARATOR.join(self.match_files())
         )
         QuicksilverUtil.update_cursor(self)
 
     def build_path(self):
+        "Builds the target path using the CWD and the pattern."
         try:
-            path = self.rel(self.get_matched_file())
-            if self.get_matched_file() == ".." + os.sep:
-                return self.get_parent_dir(path)
+            filename = self.get_matched_file()
+            path = self.rel(filename)
+            if QuicksilverUtil.is_updir(filename):
+                return self.get_parent(path)
+            return path
         except IndexError:
+            # The file does not exist.
             path = self.rel(self.pattern)
             if self.pattern.endswith(os.sep):
                 os.mkdir(path)
             if self.pattern.startswith("*") \
             or self.pattern.endswith("*"):
-                return self.glob_paths()
-        return path
+                return list(self.glob(path))
+            return path
 
     def open_on_tab(self):
         if len(self.match_files()) == 1: self.open()
@@ -284,7 +310,7 @@ class Quicksilver(object):
 
     def open(self):
         path = self.build_path()
-        self.reset_match_index()
+        self.index = 0
         if isinstance(path, list):
             return self.open_list(path)
         if os.path.isdir(path): 
@@ -318,7 +344,7 @@ function! s:MapKeys() "{{{
     imap <silent><buffer><BAR> :python quicksilver.update('\|')<CR>
     map  <silent><buffer><CR> :python quicksilver.open()<CR>
     imap <silent><buffer><CR> :python quicksilver.open()<CR>
-    imap <silent><buffer><BS> :python quicksilver.clear_character()<CR>
+    imap <silent><buffer><BS> :python quicksilver.on_backspace()<CR>
     imap <silent><buffer>! :python quicksilver.update('!')<CR>
     imap <silent><buffer>" :python quicksilver.update('"')<CR>
     imap <silent><buffer># :python quicksilver.update('#')<CR>
