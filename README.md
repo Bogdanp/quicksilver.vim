@@ -56,9 +56,23 @@ Patterns that start or end in a wildcard (`*`) are treated as glob
 patterns. For example, the pattern `*.md` will open all the files that
 have the extension `.md` in the CWD.
 
+It is possible to ignore certain items by setting a global variable `g:QSIgnored`
+that contains one or more regular expressions separated by a semicolon. For
+example, to ignore files with the .pyc extension and files with the .swp
+extension, one could add the following line to their .vimrc file:
+    
+    let g:QSIgnored = "\\.pyc$;\\.swp$"
+
+This feature was inspired by [ombarg][2]'s fork.
+
+On Windows, it is possible to switch partitions by using the QSChangeDrive
+command. Simply execute it (`:QSChangeDrive<CR>`) and you will be asked for a
+drive to change to.
+
 # Requirements
 
 * VIM 7.0+ compiled with +python
 * Python 2.6+
 
 [1]: http://github.com/tpope/vim-pathogen
+[2]: https://github.com/obmarg
