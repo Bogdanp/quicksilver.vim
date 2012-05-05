@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.4.0
+" Version:     0.4.1
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -47,7 +47,7 @@ from glob import glob
 
 class QuicksilverConst(object):
     # Files and folders that should never appear in the list of matches.
-    IGNORED = ("$Recycle.Bin",)
+    IGNORED = ("^\\$Recycle.Bin$", ".*\\.sw*")
     
     # Platform-specific root directories.
     if sys.platform == "win32":
@@ -100,6 +100,14 @@ class QuicksilverUtil(object):
     def cd(cls, path):
         "Changed the VIM working dir to the given path."
         vim.command("cd {0}".format(path))
+
+    @classmethod
+    def is_ignored(cls, filename):
+        "Matches the given filename against a blacklist of regexps."
+        for pattern in QuicksilverConst.IGNORED:
+            if re.match(pattern, filename):
+                return True
+        return False
 
 class QuicksilverMatcher(object):
     @classmethod
@@ -156,7 +164,7 @@ class Quicksilver(object):
         files = []
         for filename in os.listdir(self.cwd):
             if not self.matcher(self, filename): continue
-            if filename in QuicksilverConst.IGNORED: continue
+            if QuicksilverUtil.is_ignored(filename): continue
             if os.path.isdir(self.rel(filename)):
                 filename = "{0}{1}".format(filename, os.sep)
             files.append(filename)
@@ -406,8 +414,8 @@ function! s:MapKeys() "{{{
     imap <silent><buffer>~ :python quicksilver.update('~')<CR>
 endfunction "}}} 
 function! s:HighlightSuggestions() "{{{
-    hi link Suggestions  Special
-    match Suggestions    /\s{[^}]*}/
+    hi link Suggestions Special
+    match Suggestions   /\s*{[^}]*}/
 endfunction "}}}
 function! s:SetIgnoreCase(value) "{{{
     python quicksilver.set_ignore_case(vim.eval('a:value'))
@@ -420,6 +428,7 @@ function! s:ActivateQS() "{{{
     execute 'bo 2 new __Quicksilver__'
     python quicksilver.clear()
     setlocal wrap
+    setlocal buftype=nofile
     call s:MapKeys()
     call s:HighlightSuggestions()
 endfunction "}}}
