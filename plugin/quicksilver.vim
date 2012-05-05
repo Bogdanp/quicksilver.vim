@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.4.3
+" Version:     0.4.4
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -159,6 +159,16 @@ class Quicksilver(object):
         self.cwd = "{0}{1}".format(os.getcwd(), os.sep)
         self.ignore_case = True
         self.index = 0
+
+    def change_drive(self, drive):
+        "Change the drive on Windows systems."
+        drive = "{0}:\\".format(drive.upper())
+        if sys.platform != 'win32' \
+        or not os.path.isdir(drive):
+            return
+        self.clear()
+        self.cwd = drive
+        self.update()
 
     def set_ignore_case(self, ignore_case):
         "Setter for the ignore_case property."
@@ -463,6 +473,9 @@ endfunction "}}}
 function! s:SetMatchFn(type) "{{{
     python quicksilver.set_matcher(vim.eval('a:type'))
 endfunction "}}}
+function! s:ChangeDrive() "{{{
+    python quicksilver.change_drive(vim.eval('input("Enter a drive letter: ")'))
+endfunction "}}}
 function! s:ActivateQS() "{{{
     let g:QSRestoreWindows = winrestcmd()
     execute 'bo 2 new'
@@ -478,9 +491,10 @@ if !hasmapto("<SID>ActivateQS")
 endif
 "}}}
 "{{{ Expose public functions
-command! -nargs=0 QSActivate   call s:QSActivate()
-command! -nargs=1 QSSetIC      call s:SetIgnoreCase(<args>)
-command! -nargs=1 QSSetMatchFn call s:SetMatchFn(<args>)
+command! -nargs=0 QSActivate    call s:QSActivate()
+command! -nargs=1 QSSetIC       call s:SetIgnoreCase(<args>)
+command! -nargs=1 QSSetMatchFn  call s:SetMatchFn(<args>)
+command! -nargs=0 QSChangeDrive call s:ChangeDrive()
 "}}}
 "}}}
 " vim:fdm=marker
