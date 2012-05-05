@@ -124,7 +124,7 @@ class QuicksilverMatcher(object):
     @classmethod
     def fuzzy(cls, qs, filename):
         """Applies an ordered fuzzy match on the given filename.
-        Given the pattern "rdm", it matches "Readme.md" but not "Remade.md"."""
+        Given the pattern "rdm", it matches "Readme.md" but not "Remade"."""
         pattern, filename = qs.normalize_case(filename)
         for item in QuicksilverUtil.ordered_set(pattern):
             pos = filename.find(item)
