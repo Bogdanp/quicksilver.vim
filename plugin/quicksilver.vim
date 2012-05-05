@@ -89,9 +89,6 @@ class QuicksilverUtil(object):
     @classmethod
     def close_buffer(cls):
         "Closes the current VIM buffer."
-        vim.command("{0} wincmd w".format(
-            vim.eval('bufwinnr("__Quicksilver__")')
-        ))
         vim.command("bd!")
         vim.command("exe g:QSRestoreWindows")
         vim.command("unlet g:QSRestoreWindows")
@@ -451,10 +448,10 @@ function! s:SetMatchFn(type) "{{{
 endfunction "}}}
 function! s:ActivateQS() "{{{
     let g:QSRestoreWindows = winrestcmd()
-    execute 'bo 2 new __Quicksilver__'
-    python quicksilver.clear()
-    setlocal wrap
+    execute 'bo 2 new'
     setlocal buftype=nofile
+    setlocal wrap
+    python quicksilver.clear()
     call s:MapKeys()
     call s:HighlightSuggestions()
 endfunction "}}}
