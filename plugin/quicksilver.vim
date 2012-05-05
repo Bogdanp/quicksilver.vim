@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.4.2
+" Version:     0.4.3
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -34,6 +34,9 @@
 if exists("g:loaded_quicksilver") || !has("python") || &cp
     finish
 endif
+if !exists("g:QSIgnore")
+    let g:QSIgnore = ""
+endif
 let g:loaded_quicksilver = 1
 "}}}
 "{{{ Python code
@@ -46,8 +49,22 @@ import vim
 from collections import OrderedDict
 
 class QuicksilverConst(object):
+    # Users may set a global variable containing regexps of filenames that
+    # should be ignored. For example, to ignore .pyc and .swp files, one
+    # could add the following line to their .vimrc file:
+    #   let g:QSIgnore = "\\.pyc$;\\.swp$"
+    #
+    # This feature was inspired by obmarg's (https://github.com/obmarg) fork.
+    USER_IGNORED = vim.eval("g:QSIgnore").split(";")
+
+    # Since g:QSIgnore might be empty USER_IGNORED could take the form ['']
+    # which is something we don't want since the empty string regexp will match
+    # all filenames. This accounts for that special case.
+    if len(USER_IGNORED) == 1 and not USER_IGNORED[0]:
+        USER_IGNORED = []
+
     # Files and folders that should never appear in the list of matches.
-    IGNORED = ("^\\$Recycle\\.Bin$", ".*\\.sw*")
+    IGNORED = ["^\\$Recycle\\.Bin$", ".*\\.sw*"] + USER_IGNORED
     
     # Platform-specific root directories.
     if sys.platform == "win32":
@@ -101,7 +118,7 @@ class QuicksilverUtil(object):
 
     @classmethod
     def cd(cls, path):
-        "Changed the VIM working dir to the given path."
+        "Changes the VIM working dir to the given path."
         vim.command("cd {0}".format(path))
 
     @classmethod
