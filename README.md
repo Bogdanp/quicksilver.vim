@@ -47,7 +47,7 @@ Matching
 --------
 
 `C-f` turns on `fuzzy matching`. Fuzzy matching will match any filename
-that contains every character in pattern in order. For example, the
+that contains every character in the pattern in order. For example, the
 pattern `rdm` will match `README` but not `REMADE`.
 
 `C-n` turns on `normal matching`. Normal matching will match any
