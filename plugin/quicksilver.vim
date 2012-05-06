@@ -492,7 +492,7 @@ if !hasmapto("<SID>ActivateQS")
 endif
 "}}}
 "{{{ Expose public functions
-command! -nargs=0 QSActivate    call s:QSActivate()
+command! -nargs=0 QSActivate    call s:ActivateQS()
 command! -nargs=1 QSSetIC       call s:SetIgnoreCase(<args>)
 command! -nargs=1 QSSetMatchFn  call s:SetMatchFn(<args>)
 command! -nargs=0 QSChangeDrive call s:ChangeDrive()
