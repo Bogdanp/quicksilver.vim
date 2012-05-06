@@ -43,6 +43,7 @@ let g:loaded_quicksilver = 1
 python <<EOF
 import glob
 import os
+import re
 import sys
 import vim
 
