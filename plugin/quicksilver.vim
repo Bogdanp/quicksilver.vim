@@ -47,8 +47,6 @@ import re
 import sys
 import vim
 
-from collections import OrderedDict
-
 class QuicksilverConst(object):
     # Users may set a global variable containing regexps of filenames that
     # should be ignored. For example, to ignore .pyc and .swp files, one
@@ -80,11 +78,6 @@ class QuicksilverConst(object):
     UPDIR = "..{0}".format(os.sep)
 
 class QuicksilverUtil(object):
-    @classmethod
-    def ordered_set(cls, string):
-        "Builds a fake ordered set."
-        return OrderedDict((c, True) for c in string).keys()
-
     @classmethod
     def compare_files(cls, first, second):
         """Compares two file names so that files that start with a dot are
@@ -141,7 +134,7 @@ class QuicksilverMatcher(object):
         """Applies an ordered fuzzy match on the given filename.
         Given the pattern "rdm", it matches "Readme.md" but not "Remade"."""
         pattern, filename = qs.normalize_case(filename)
-        for item in QuicksilverUtil.ordered_set(pattern):
+        for item in pattern:
             pos = filename.find(item)
             if filename and pos == -1:
                 return False
