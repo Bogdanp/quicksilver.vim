@@ -150,7 +150,9 @@ class QuicksilverMatcher(object):
 class Quicksilver(object):
     def __init__(self, matcher='normal'):
         self.set_matcher(matcher)
-        self.cwd = "{0}{1}".format(os.getcwd(), os.sep)
+        self.cwd = os.getcwd()
+        if not self.cwd.endswith(os.sep):
+            self.cwd += os.sep
         self.ignore_case = True
         self.index = 0
 
