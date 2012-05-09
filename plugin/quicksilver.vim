@@ -482,8 +482,9 @@ function! s:ActivateQS() "{{{
     call s:HighlightSuggestions()
 endfunction "}}}
 "{{{ Map <leader>q to ActivateQS
-if !hasmapto("<SID>ActivateQS")
-    map <unique><leader>q :call <SID>ActivateQS()<CR>
+nnoremap <Plug>ActivateQS :call <SID>ActivateQS()<CR>
+if !hasmapto("<Plug>ActivateQS")
+    map <unique><leader>q <Plug>ActivateQS
 endif
 "}}}
 "{{{ Expose public functions
