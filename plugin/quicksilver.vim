@@ -179,7 +179,7 @@ class Quicksilver(object):
     def rel(self, path):
         """Joins the given path together with the CWD and sanitizes the
         resulting path."""
-        return self.sanitize_path(os.path.join(self.cwd, path))
+        return os.path.join(self.cwd, path)
 
     def get_parent(self, path):
         "Returns the parent directory of the CWD."
@@ -322,11 +322,11 @@ class Quicksilver(object):
         self.cwd = path
         self.clear()
         QuicksilverUtil.update_cursor(self)
-        QuicksilverUtil.cd(path)
+        QuicksilverUtil.cd(self.sanitize_path(path))
 
     def open_file(self, path):
         QuicksilverUtil.close_buffer()
-        QuicksilverUtil.edit(path)
+        QuicksilverUtil.edit(self.sanitize_path(path))
 
     def open(self):
         path = self.build_path()
