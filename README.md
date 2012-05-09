@@ -24,6 +24,12 @@ insert mode. Typing any key will update the list of suggestions and pressing
 `CR` will open the first item in the suggestion list. Use `C-c` to quickly
 close the buffer.
 
+You can change the `<leader>q` mapping with the following in your `vimrc`.
+
+    nmap <leader>r <Plug>ActivateQS
+
+To map it to `<leader>r`
+
 You may cycle through the suggestion list using `Tab` and `S-Tab`. `CR` will
 open the current suggestion (that's the first item in the list of matches).
 
