@@ -1,6 +1,6 @@
 " =======================================================================
 " File:        quicksilver.vim
-" Version:     0.4.8
+" Version:     0.5.0
 " Description: VIM plugin that provides a fast way to open files.
 " Maintainer:  Bogdan Popa <popa.bogdanp@gmail.com>
 " License:     Copyright (C) 2011 Bogdan Popa
@@ -63,7 +63,7 @@ class QuicksilverConst(object):
         USER_IGNORED = []
 
     # Files and folders that should never appear in the list of matches.
-    IGNORED = ["^\\$Recycle\\.Bin$", ".*\\.sw*"] + USER_IGNORED
+    IGNORED = ["^\\$Recycle\\.Bin$", ".*\\.sw.+$"] + USER_IGNORED
     
     # Platform-specific root directories.
     if sys.platform == "win32":
