@@ -75,7 +75,7 @@ It is possible to ignore certain items by setting a global variable
 semicolon. For example, to ignore files with the .pyc extension and files with
 the .swp extension, one could add the following line to their .vimrc file:
 
-    let g:QSIgnore = "\\.pyc$;\\.swp$"
+    let g:QSIgnore = ".*\.pyc$;.*\.swp$"
 
 This feature was inspired by [ombarg][2]'s fork.
 

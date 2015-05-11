@@ -51,7 +51,7 @@ class QuicksilverConst(object):
     # Users may set a global variable containing regexps of filenames that
     # should be ignored. For example, to ignore .pyc and .swp files, one
     # could add the following line to their .vimrc file:
-    #   let g:QSIgnore = "\\.pyc$;\\.swp$"
+    #   let g:QSIgnore = ".*\.pyc$;.*\.swp$"
     #
     # This feature was inspired by obmarg's (https://github.com/obmarg) fork.
     USER_IGNORED = vim.eval("g:QSIgnore").split(";")
